@@ -11,9 +11,10 @@ import path from "path";
 import globalErrorHandler from "./controller/errorController";
 import AppError from "./utils/appError";
 
+import userRouter from "./route/userRoute";
+
 const app = express();
 
-app.enable("trust proxy");
 
 app.use(cors());
 
@@ -47,6 +48,8 @@ app.use(cookieParser());
 app.use(hpp({}));
 
 app.use(compression());
+
+app.use("/api/users", userRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
