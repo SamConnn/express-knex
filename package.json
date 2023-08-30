@@ -28,6 +28,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@types/express-rate-limit": "^6.0.0",
+    "@types/knex": "^0.16.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
