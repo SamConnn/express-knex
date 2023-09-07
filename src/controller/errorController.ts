@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import AppError from './../utils/appError'
 
@@ -15,20 +16,21 @@ const handleJWTExpiredError = (): AppError =>
   new AppError('Your token has expired! Please log in again.', 401)
 
 const sendErrorDev = (err: any, req: Request, res: Response): any => {
-  if (req.originalUrl.startsWith('/api')) {
-    return res.status(err.statusCode).json({
-      status: err.status,
-      error: err,
-      message: err.message,
-      stack: err.stack
-    })
-  }
+  err.statusCode = err.statusCode === true ? 400 : err.statusCode
 
-  console.error('ERROR 💥', err)
-  res.status(err.statusCode).render('error', {
-    title: 'Something went wrong!',
-    msg: err.message
-  })
+  /* to be handled later */
+
+  // if (req.originalUrl.startsWith('/api')) {
+  //   return res.status(err.statusCode).json({
+  //     error: err
+  //   })
+  // }
+
+  // console.error('ERROR 💥', err)
+  // res.status(err.statusCode).render('error', {
+  //   title: 'Something went wrong!',
+  //   msg: err.message
+  // })
 }
 
 const sendErrorProd = (err: any, req: Request, res: Response): any => {

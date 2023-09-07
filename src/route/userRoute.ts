@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express'
 import userController from '../controller/userController'
 
-const r = express.Router()
+const route = express.Router()
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-r.get('/', (userController.getUser))
+route
+  .get('/', userController.getUser)
+  .get('/:id', userController.findUserById)
+  .post('/', userController.createUser)
+  .put('/:id', userController.updateUser)
+  .delete('/:id', userController.deleteUser)
 
-export default r
+export default route
