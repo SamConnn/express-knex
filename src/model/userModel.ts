@@ -11,8 +11,10 @@ export const getUserModel = async (
 
 export const createUserModel = async (body: any, trx: Knex) => await trx(table).insert(body).returning('*')
 
-export const getUserByIdModel = async (id: number, trx: Knex) => await trx(table).select('*').where({ id })
+export const getUserByIdModel = async (id: string, trx: Knex) => await trx(table).select('*').where({ id }).first()
 
-export const updateUserModel = async (id: number, body: any, trx: Knex) => await trx(table).update(body).where({ id }).returning('*')
+export const updateUserModel = async (id: string, body: any, trx: Knex) => await trx(table).update(body).where({ id }).returning('*')
 
-export const deleteUserModel = async (id: number, trx: Knex) => await trx(table).del().where({ id }).returning('*')
+export const deleteUserModel = async (id: string, trx: Knex) => await trx(table).del().where({ id }).returning('*')
+
+export const findUserByEmail = async (email: string, trx: Knex) => await trx(table).select('*').where({ email })

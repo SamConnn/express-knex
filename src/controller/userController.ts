@@ -24,7 +24,10 @@ const getUser = async (
       })
     })
     .catch((err) => {
-      next(new AppError(err, 500))
+      return res.status(500).json({
+        status: 'fail',
+        message: err
+      })
     })
 }
 
@@ -35,7 +38,7 @@ const findUserById = async (
 ): Promise<void> => {
   const { id } = req.params
 
-  await getUserByIdModel(Number(id), knex)
+  await getUserByIdModel(id, knex)
     .then((result) => {
       return res.status(200).json({
         status: 'success',

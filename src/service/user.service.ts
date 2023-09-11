@@ -25,7 +25,7 @@ export const CreateUserService = async (
 }
 
 export const updateUserService = async (
-  id: number,
+  id: string,
   body: any,
   res: Response
 ): Promise<any> => {
@@ -42,5 +42,5 @@ export const updateUserService = async (
 }
 
 export const deleteUserService = async (
-  id: number
+  id: string
 ): Promise<any> => await deleteUserModel(id, knex)
