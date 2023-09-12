@@ -7,6 +7,7 @@ import {
   encryptPassword
 } from '../config/auth'
 import knex from '../config/knex'
+import { CustomError, InternalServerError, UnauthorizedError } from '../lib/errors'
 import {
   createUserModel,
   findUserByEmail,
@@ -28,10 +29,8 @@ const signup = async (
   const isUserExist = await findUserByEmail(email, knex)
 
   if (isUserExist.length > 0) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Email already exist'
-    })
+    next(new CustomError('User already exist', 'Can not create user', 400))
+    return
   }
 
   createUserModel(
@@ -48,15 +47,15 @@ const signup = async (
       createSendToken(result[0], 201, req, res)
     })
     .catch((err) => {
-      console.error(err)
-      return res.status(500).json({
-        status: 'fail',
-        message: err
-      })
+      next(new InternalServerError(err.message))
     })
 }
 
-export const login = async (req: Request, res: Response): Promise<any> => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
   try {
     const { email, password } = req.body
 
@@ -73,14 +72,13 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     const isPasswordCorrect = await decryptPassword(password, user[0].password)
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Incorrect email or password'
-      })
+      next(new CustomError('Incorrect email or password', '', 401))
     }
     createSendToken(user, 200, req, res)
   } catch (error) {
-    console.error(error)
+    if (error instanceof InternalServerError) {
+      throw new InternalServerError(error.message)
+    }
   }
 }
 
@@ -100,12 +98,7 @@ export const protect = async (
     }
 
     if (!token) {
-      next(
-        res.status(401).json({
-          status: 'fail',
-          message: 'You are not logged in! Please log in to get access.'
-        })
-      )
+      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
       return
     }
 
@@ -118,12 +111,7 @@ export const protect = async (
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
     if (!currentUser) {
-      next(
-        res.status(401).json({
-          status: 'fail',
-          message: 'The user belonging to this token does no longer exist.'
-        })
-      )
+      next(new UnauthorizedError('The user belonging to this token does no longer exist.'))
       return
     }
 
@@ -141,10 +129,9 @@ export const protect = async (
     res.locals.user = currentUser
     next()
   } catch (error) {
-    return res.status(500).json({
-      status: 'fail',
-      message: error
-    })
+    if (error instanceof InternalServerError) {
+      throw new InternalServerError(error.message)
+    }
   }
 }
 
@@ -153,12 +140,7 @@ export const restrictTo = (...roles: string[]) => {
     const { id } = res.locals.user
 
     if (!roles.includes(res.locals.user.role)) {
-      next(
-        res.status(403).json({
-          status: 'fail',
-          message: 'You do not have permission to perform this action'
-        })
-      )
+      next(new UnauthorizedError('You do not have permission to perform this action'))
       return
     }
 
@@ -166,12 +148,7 @@ export const restrictTo = (...roles: string[]) => {
     const findRole = await getUserByIdModel(id, knex)
 
     if (!findRole || findRole.role !== 'Admin') {
-      next(
-        res.status(404).json({
-          status: 'fail',
-          message: 'You do not have permission to perform this action'
-        })
-      )
+      next(new UnauthorizedError('You do not have permission to perform this action'))
       return
     }
     next()

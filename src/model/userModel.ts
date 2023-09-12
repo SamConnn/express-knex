@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { Knex } from 'knex'
+import { type Knex } from 'knex'
 
 const table = 'user'
 
@@ -23,4 +23,4 @@ export const updateUserModel = async (id: string, body: any, trx: Knex) => await
 
 export const deleteUserModel = async (id: string, trx: Knex) => await trx(table).del().where({ id }).returning('*')
 
-export const findUserByEmail = async (email: string, trx: Knex) => await trx(table).select('*').where({ email }).first()
+export const findUserByEmail = async (email: string, trx: Knex) => await trx(table).select('*').where({ email })

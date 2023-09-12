@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import knex from '../config/knex'
+import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getUserByIdModel, getUserModel } from '../model/userModel'
 import {
   CreateUserService,
   deleteUserService,
   updateUserService
 } from '../service/user.service'
-import AppError from '../utils/appError'
 
 const getUser = async (
   req: Request,
@@ -24,10 +24,7 @@ const getUser = async (
       })
     })
     .catch((err) => {
-      return res.status(500).json({
-        status: 'fail',
-        message: err
-      })
+      next(new NotFoundError(err))
     })
 }
 
@@ -46,7 +43,7 @@ const findUserById = async (
       })
     })
     .catch((err) => {
-      next(new AppError(err, 500))
+      next(new NotFoundError(err))
     })
 }
 
@@ -65,7 +62,7 @@ const createUser = async (
       })
     })
     .catch((err) => {
-      next(new AppError(err, 500))
+      next(new InternalServerError(err))
     })
 }
 
@@ -85,7 +82,7 @@ const updateUser = async (
       })
     })
     .catch((err) => {
-      next(new AppError(err, 500))
+      next(new InternalServerError(err))
     })
 }
 
@@ -104,7 +101,7 @@ const deleteUser = async (
       })
     })
     .catch((err) => {
-      next(new AppError(err, 500))
+      next(new InternalServerError(err))
     })
 }
 

@@ -8,9 +8,10 @@ import helmet from 'helmet'
 import hpp from 'hpp'
 import morgan from 'morgan'
 import path from 'path'
-import globalErrorHandler from './controller/errorController'
+import logger from './lib/logger/logger'
 import AppError from './utils/appError'
 
+import { errorHandler, notFoundHandler } from './lib/handlers'
 import userRouter from './route/userRoute'
 
 const app = express()
@@ -54,6 +55,9 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
 
-app.use(globalErrorHandler)
+app.use(notFoundHandler)
+//Error Handler
+app.use(logger.requestLogger)
+app.use(errorHandler)
 
 export default app
