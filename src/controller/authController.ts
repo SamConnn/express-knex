@@ -74,7 +74,7 @@ export const login = async (
     if (!isPasswordCorrect) {
       next(new CustomError('Incorrect email or password', '', 401))
     }
-    createSendToken(user, 200, req, res)
+    createSendToken(user[0], 200, req, res)
   } catch (error) {
     if (error instanceof InternalServerError) {
       throw new InternalServerError(error.message)
