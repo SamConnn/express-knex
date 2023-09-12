@@ -1,9 +1,17 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { createSendToken, decryptPassword, encryptPassword } from '../config/auth'
+import {
+  createSendToken,
+  decryptPassword,
+  encryptPassword
+} from '../config/auth'
 import knex from '../config/knex'
-import { createUserModel, findUserByEmail, getUserByIdModel } from '../model/userModel'
+import {
+  createUserModel,
+  findUserByEmail,
+  getUserByIdModel
+} from '../model/userModel'
 import Email from '../utils/email'
 
 const signup = async (
@@ -110,10 +118,13 @@ export const protect = async (
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
     if (!currentUser) {
-      next(res.status(401).json({
-        status: 'fail',
-        message: 'The user belonging to this token does no longer exist.'
-      })); return
+      next(
+        res.status(401).json({
+          status: 'fail',
+          message: 'The user belonging to this token does no longer exist.'
+        })
+      )
+      return
     }
 
     /* to be implemented later */
@@ -137,4 +148,34 @@ export const protect = async (
   }
 }
 
-export default { signup, login, protect }
+export const restrictTo = (...roles: string[]) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = res.locals.user
+
+    if (!roles.includes(res.locals.user.role)) {
+      next(
+        res.status(403).json({
+          status: 'fail',
+          message: 'You do not have permission to perform this action'
+        })
+      )
+      return
+    }
+
+    // Check if user still exists
+    const findRole = await getUserByIdModel(id, knex)
+
+    if (!findRole || findRole.role !== 'Admin') {
+      next(
+        res.status(404).json({
+          status: 'fail',
+          message: 'You do not have permission to perform this action'
+        })
+      )
+      return
+    }
+    next()
+  }
+}
+
+export default { signup, login, protect, restrictTo }
