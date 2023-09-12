@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
+import { type Knex } from 'knex'
 import {
   createSendToken,
   decryptPassword,
   encryptPassword
 } from '../config/auth'
 import knex from '../config/knex'
-import { CustomError, InternalServerError, UnauthorizedError } from '../lib/errors'
+import { withTransaction } from '../config/transact'
+import {
+  CustomError,
+  InternalServerError,
+  UnauthorizedError
+} from '../lib/errors'
 import {
   createUserModel,
   findUserByEmail,
@@ -32,17 +38,20 @@ const signup = async (
     next(new CustomError('User already exist', 'Can not create user', 400))
     return
   }
-
-  createUserModel(
-    {
-      username,
-      email,
-      password: passEncrypt,
-      role
-    },
-    knex
+  await withTransaction(
+    knex,
+    async (trx: Knex) =>
+      await createUserModel(
+        {
+          email,
+          username,
+          password: passEncrypt,
+          role
+        },
+        trx
+      )
   )
-    .then(async (result: any) => {
+    .then(async (result) => {
       await Email(result[0], url).sendWelcome()
       createSendToken(result[0], 201, req, res)
     })
@@ -99,7 +108,11 @@ export const protect = async (
     }
 
     if (!token) {
-      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
+      next(
+        new UnauthorizedError(
+          'You are not logged in! Please log in to get access.'
+        )
+      )
       return
     }
 
@@ -112,7 +125,11 @@ export const protect = async (
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
     if (!currentUser) {
-      next(new UnauthorizedError('The user belonging to this token does no longer exist.'))
+      next(
+        new UnauthorizedError(
+          'The user belonging to this token does no longer exist.'
+        )
+      )
       return
     }
 
@@ -141,7 +158,11 @@ export const restrictTo = (...roles: string[]) => {
     const { id } = res.locals.user
 
     if (!roles.includes(res.locals.user.role)) {
-      next(new UnauthorizedError('You do not have permission to perform this action'))
+      next(
+        new UnauthorizedError(
+          'You do not have permission to perform this action'
+        )
+      )
       return
     }
 
@@ -149,7 +170,11 @@ export const restrictTo = (...roles: string[]) => {
     const findRole = await getUserByIdModel(id, knex)
 
     if (!findRole || findRole.role !== 'Admin') {
-      next(new UnauthorizedError('You do not have permission to perform this action'))
+      next(
+        new UnauthorizedError(
+          'You do not have permission to perform this action'
+        )
+      )
       return
     }
     next()

@@ -1,64 +1,71 @@
-import type { Knex } from "knex";
+import type { Knex } from 'knex'
 
 // Update with your config settings.
 
-const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
+import dotenv from 'dotenv'
+dotenv.config({ path: './.env' })
 
-const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env
 
-const config: { [key: string]: Knex.Config } = {
+const config: Record<string, Knex.Config> = {
   development: {
-    client: "postgresql",
+    client: 'postgresql',
     connection: {
       host: DB_HOST,
-      database: DB_NAME,
-      user:   DB_USER,
-      password: DB_PASS,
+      database: DB_DATABASE,
+      port: Number(DB_PORT),
+      user: DB_USER,
+      password: DB_PASSWORD
     },
+    /* external connection */
+    // connection: 'postgres://mlaxxpue:BWTGY_tresN4DsOFxmTh8KltNWaYc71Q@rain.db.elephantsql.com/mlaxxpue',
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: "./migrations"
+      tableName: '/migrations'
     }
   },
 
   staging: {
-    client: "postgresql",
+    client: 'postgresql',
     connection: {
       host: DB_HOST,
-      database: DB_NAME,
-      user:   DB_USER,
-      password: DB_PASS,
+      database: DB_DATABASE,
+      port: Number(DB_PORT),
+      user: DB_USER,
+      password: DB_PASSWORD
     },
+    // connection: 'postgres://mlaxxpue:BWTGY_tresN4DsOFxmTh8KltNWaYc71Q@rain.db.elephantsql.com/mlaxxpue',
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: "./migrations"
+      tableName: '/migrations'
     }
   },
 
   production: {
-    client: "postgresql",
+    client: 'postgresql',
     connection: {
       host: DB_HOST,
-      database: DB_NAME,
-      user:   DB_USER,
-      password: DB_PASS,
+      database: DB_DATABASE,
+      port: Number(DB_PORT),
+      user: DB_USER,
+      password: DB_PASSWORD
     },
+    // connection: 'postgres://mlaxxpue:BWTGY_tresN4DsOFxmTh8KltNWaYc71Q@rain.db.elephantsql.com/mlaxxpue',
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: "./migrations"
+      tableName: '/migrations'
     }
   }
 
-};
+}
 
-module.exports = config;
+module.exports = config
