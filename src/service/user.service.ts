@@ -4,9 +4,14 @@ import { type Knex } from 'knex'
 import knex from '../config/knex'
 import { withTransaction } from '../config/transact'
 import { userSchema } from '../contanst'
-import { createUserModel, deleteUserModel, updateUserModel } from '../model/userModel'
+import { createUserModel, deleteUserModel, getUserModel, updateUserModel } from '../model/userModel'
 import { handleErrorValidationArray } from '../utils/appError'
 import { vali } from '../utils/validator'
+
+export const getUserService = async (
+  page: number,
+  limit: number
+): Promise<any> => await getUserModel(knex, Number(page), Number(limit))
 
 export const CreateUserService = async (
   body: any,
