@@ -23,14 +23,8 @@ const getUser = async (
 ): Promise<void> => {
   const { page = 1, limit = 10 } = req.query
 
-  /* to be implemented */
-  // if ((await redis.exists('key')) && (await redis.expire('key', 5))) {
-  //   void redisCache('key', req, res, next)
-  // } else {
   await getUserService(Number(page), Number(limit))
     .then(async (result) => {
-      // await redis.set('key', JSON.stringify(result), { EX: 5 })
-
       return res.status(200).json({
         status: 'success',
         data: result
@@ -39,7 +33,6 @@ const getUser = async (
     .catch((err) => {
       next(new NotFoundError(err))
     })
-  // }
 }
 
 const findUserById = async (
