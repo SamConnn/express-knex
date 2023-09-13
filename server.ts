@@ -1,6 +1,8 @@
 import dotenv from 'dotenv'
 import app from './src/app'
 import { onDataBaseConnected } from './src/config/knex'
+import { CustomError } from './src/lib/errors'
+import { isConnectToRedis } from './src/middleware/redisCache'
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...')
@@ -21,6 +23,7 @@ const databaseConnect = async (): Promise<void> => {
 }
 
 void databaseConnect()
+void isConnectToRedis()
 
 const port = (Boolean((process.env.PORT ?? ''))) || 3000
 const server = app.listen(port, () => {
@@ -30,9 +33,10 @@ const server = app.listen(port, () => {
 process.on('unhandledRejection', (err: Error) => {
   console.log('UNHANDLED REJECTION! 💥 Shutting down...')
   console.log(err.name, err.message)
-  server.close(() => {
-    process.exit(1)
-  })
+  return new CustomError(err.message, err.name, 500)
+  // server.close(() => {
+  //   process.exit(1)
+  // })
 })
 
 process.on('SIGTERM', () => {
