@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon --exec ts-node server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc --build -f ./tsconfig.json",
     "migrate:make": "knex migrate:make --knexfile knexfile.ts",
     "migrate:latest": "knex --knexfile ./knexfile.ts migrate:latest",
     "seed:make": "knex seed:make ",
@@ -47,7 +49,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^6.11.2",
+    "express-rate-limit": "^7.0.0",
     "fastest-validator": "^1.17.0",
     "helmet": "^7.0.0",
     "hpp": "^0.2.3",

@@ -30,14 +30,14 @@ const signup = async (
 
   const { email, username, password, role } = req.body
 
-  const passEncrypt = await encryptPassword(password)
-
   const isUserExist = await findUserByEmail(email, knex)
 
   if (isUserExist.length > 0) {
     next(new CustomError('User already exist', 'Can not create user', 400))
     return
   }
+  const passEncrypt = await encryptPassword(password)
+
   await withTransaction(
     knex,
     async (trx: Knex) =>
@@ -52,8 +52,8 @@ const signup = async (
       )
   )
     .then(async (result) => {
-      await Email(result[0], url).sendWelcome()
       createSendToken(result[0], 201, req, res)
+      await Email(result[0], url).sendWelcome()
     })
     .catch((err) => {
       next(new InternalServerError(err.message))
@@ -65,31 +65,31 @@ export const login = async (
   res: Response,
   next: NextFunction
 ): Promise<any> => {
-  try {
-    const { email, password } = req.body
+  const { email, password } = req.body
 
-    // 1) Check if email and password exist
-    if (!email || !password) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please provide email and password!'
-      })
-    }
-
-    const user: any = await findUserByEmail(email, knex)
-
-    const isPasswordCorrect = await decryptPassword(password, user[0].password)
-
-    if (!isPasswordCorrect) {
-      next(new CustomError('Incorrect email or password', '', 401))
-      return
-    }
-    createSendToken(user[0], 200, req, res)
-  } catch (error) {
-    if (error instanceof InternalServerError) {
-      throw new InternalServerError(error.message)
-    }
+  // 1) Check if email and password exist
+  if (!email ?? !password) {
+    next(new CustomError('Please provide email and password!', '', 400))
+    return
   }
+
+  await findUserByEmail(email, knex).then(async (result) => {
+    if (result.length === 0) {
+      next(new CustomError('User not found', '', 404))
+    } else {
+      const isPasswordCorrect = await decryptPassword(
+        password,
+        result[0].password
+      )
+
+      if (!isPasswordCorrect) {
+        next(new CustomError('Incorrect email or password', '', 401))
+        return
+      }
+
+      createSendToken(result[0], 200, req, res)
+    }
+  })
 }
 
 export const protect = async (
@@ -148,7 +148,7 @@ export const protect = async (
     next()
   } catch (error) {
     if (error instanceof InternalServerError) {
-      throw new InternalServerError(error.message)
+      next(new InternalServerError(error.message))
     }
   }
 }

@@ -9,8 +9,7 @@ export const getUserModel = async (
   limit: number
 ): Promise<any> => await trx(table)
   .select('user.id', 'user.username', 'user.email', 'user.role')
-  .offset((page - 1) * limit)
-  .limit(limit)
+  .paginate({ perPage: limit, currentPage: page, isLengthAware: true })
 
 export const createUserModel = async (body: any, trx: Knex) => await trx(table).insert(body).returning('*')
 

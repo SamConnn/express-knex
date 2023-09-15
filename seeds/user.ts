@@ -6,7 +6,7 @@ export async function seed (knex: Knex): Promise<void> {
   await knex('user').del()
 
   // add array of objects to insertMany using faker
-  const users = [...Array(100)].map(() => ({
+  const users = [...Array(1000)].map(() => ({
     id: faker.string.uuid(),
     username: faker.person.firstName(),
     email: faker.internet.email(),

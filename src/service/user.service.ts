@@ -11,7 +11,7 @@ import { vali } from '../utils/validator'
 export const getUserService = async (
   page: number,
   limit: number
-): Promise<any> => await getUserModel(knex, Number(page), Number(limit))
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getUserModel(trx, page, limit))
 
 export const CreateUserService = async (
   body: any,
@@ -48,4 +48,4 @@ export const updateUserService = async (
 
 export const deleteUserService = async (
   id: string
-): Promise<any> => await deleteUserModel(id, knex)
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await deleteUserModel(id, trx))
