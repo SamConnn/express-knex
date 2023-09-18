@@ -2,6 +2,7 @@ version: "3.8"
 
 networks:
   backend:
+    name: laradock_backend
     driver: bridge
 
 services:
