@@ -6,7 +6,7 @@ import userController from '../controller/userController'
 const route = express.Router()
 
 route.post('/sign-up', authController.signup)
-route.get('/log-in', authController.login)
+route.post('/log-in', authController.login)
 
 route.use(authController.protect, authController.restrictTo('Admin'))
 
