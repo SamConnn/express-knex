@@ -18,7 +18,7 @@ import {
   createUserModel,
   findUserByEmail,
   getUserByIdModel
-} from '../model/userModel'
+} from '../model/user.model'
 import Email from '../utils/email'
 
 const signup = async (

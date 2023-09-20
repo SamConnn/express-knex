@@ -3,21 +3,21 @@ import { type Response } from 'express'
 import { type Knex } from 'knex'
 import knex from '../config/knex'
 import { withTransaction } from '../config/transact'
-import { userSchema } from '../contanst'
-import { createUserModel, deleteUserModel, getUserModel, updateUserModel } from '../model/user.model'
+import { eventSchema } from '../contanst'
+import { createEventModel, deleteEventModel, getEventModel, updateEventModel } from '../model/event.model'
 import { handleErrorValidationArray } from '../utils/appError'
 import { vali } from '../utils/validator'
 
-export const getUserService = async (
+export const getEventService = async (
   page: number,
   limit: number
-): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getUserModel(trx, page, limit))
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getEventModel(trx, page, limit))
 
-export const CreateUserService = async (
+export const CreateEventService = async (
   body: any,
   res: Response
 ): Promise<any> => {
-  const check = vali.compile(userSchema)
+  const check = vali.compile(eventSchema)
   const invalid = check(body)
 
   if (!invalid) {
@@ -26,15 +26,15 @@ export const CreateUserService = async (
       message: handleErrorValidationArray(invalid)
     })
   }
-  return await withTransaction(knex, async (trx: Knex) => await createUserModel(body, trx))
+  return await withTransaction(knex, async (trx: Knex) => await createEventModel(body, trx))
 }
 
-export const updateUserService = async (
+export const updateEventService = async (
   id: string,
   body: any,
   res: Response
 ): Promise<any> => {
-  const check = vali.compile(userSchema)
+  const check = vali.compile(eventSchema)
   const invalid = check(body)
 
   if (!invalid) {
@@ -43,9 +43,9 @@ export const updateUserService = async (
       message: handleErrorValidationArray(invalid)
     })
   }
-  return await withTransaction(knex, async (trx: Knex) => await updateUserModel(id, body, trx))
+  return await withTransaction(knex, async (trx: Knex) => await updateEventModel(id, body, trx))
 }
 
-export const deleteUserService = async (
+export const deleteEventService = async (
   id: string
-): Promise<any> => await withTransaction(knex, async (trx: Knex) => await deleteUserModel(id, trx))
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await deleteEventModel(id, trx))

@@ -2,7 +2,7 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import knex from '../config/knex'
 import { InternalServerError, NotFoundError } from '../lib/errors'
-import { getUserByIdModel } from '../model/userModel'
+import { getUserByIdModel } from '../model/user.model'
 import {
   CreateUserService,
   deleteUserService,

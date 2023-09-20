@@ -12,7 +12,8 @@ import logger from './lib/logger/logger'
 import AppError from './utils/appError'
 
 import { errorHandler, notFoundHandler } from './lib/handlers'
-import userRouter from './route/userRoute'
+import eventRouter from './route/event.route'
+import userRouter from './route/user.route'
 
 const app = express()
 
@@ -50,6 +51,7 @@ app.use(hpp({}))
 app.use(compression())
 
 app.use('/api/users', userRouter)
+app.use('/api/events', eventRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))

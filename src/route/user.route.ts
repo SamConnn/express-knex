@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express'
-import authController from '../controller/authController'
-import userController from '../controller/userController'
+import authController from '../controller/auth.controller'
+import userController from '../controller/user.controller'
 
 const route = express.Router()
 
