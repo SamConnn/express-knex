@@ -1,3 +1,24 @@
-import Validator from 'fastest-validator'
+import { date, object, string } from 'yup'
 
-export const vali = new Validator()
+export const userSchema = object({
+  body: object({
+    username: string().required(),
+    email: string().required(),
+    password: string().required(),
+    role: string().required()
+  })
+})
+
+export const eventSchema = object({
+  body: object({
+    name: string().required(),
+    description: string().required(),
+    location: string().required(),
+    date: date().required(),
+    time: date().required(),
+    image: string().required()
+  }),
+  params: object({
+    id: string().nullable()
+  })
+})

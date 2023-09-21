@@ -2,6 +2,8 @@
 import express from 'express'
 import authController from '../controller/auth.controller'
 import userController from '../controller/user.controller'
+import { validate } from '../middleware/validate'
+import { userSchema } from '../utils/validator'
 
 const route = express.Router()
 
@@ -13,8 +15,8 @@ route.use(authController.protect, authController.restrictTo('Admin'))
 route
   .get('/', userController.getUser)
   .get('/:id', userController.findUserById)
-  .post('/', userController.createUser)
-  .put('/:id', userController.updateUser)
+  .post('/', validate(userSchema), userController.createUser)
+  .put('/:id', validate(userSchema), userController.updateUser)
   .delete('/:id', userController.deleteUser)
 
 export default route

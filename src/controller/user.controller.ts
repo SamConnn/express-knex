@@ -42,12 +42,16 @@ const findUserById = async (
   const { id } = req.params
 
   await getUserByIdModel(id, knex)
-    .then((result) =>
-      res.status(200).json({
+    .then((result) => {
+      if (!result) {
+        next(new NotFoundError('User not found'))
+        return
+      }
+      return res.status(200).json({
         status: 'success',
         data: result
       })
-    )
+    })
     .catch((err) => {
       next(new NotFoundError(err))
     })
@@ -60,7 +64,7 @@ const createUser = async (
 ): Promise<void> => {
   const { body } = req
 
-  CreateUserService(body, res)
+  CreateUserService(body, next)
     .then((result) =>
       res.status(200).json({
         status: 'success',
@@ -80,12 +84,17 @@ const updateUser = async (
   const { id } = req.params
   const { body } = req
 
-  updateUserService(id, body, res)
-    .then((result) =>
-      res.status(200).json({
+  updateUserService(id, body)
+    .then((result) => {
+      if (!result) {
+        next(new NotFoundError('User not found'))
+        return
+      }
+      return res.status(200).json({
         status: 'success',
         data: result
       })
+    }
     )
     .catch((err) => {
       next(new InternalServerError(err))

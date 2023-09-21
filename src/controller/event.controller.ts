@@ -3,7 +3,12 @@ import { type NextFunction, type Request, type Response } from 'express'
 import knex from '../config/knex'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getEventByIdModel } from '../model/event.model'
-import { CreateEventService, deleteEventService, getEventService, updateEventService } from '../service/event.service'
+import {
+  CreateEventService,
+  deleteEventService,
+  getEventService,
+  updateEventService
+} from '../service/event.service'
 
 // const redis = createClient({
 //   password: 'secret_redis'
@@ -37,12 +42,16 @@ const findEventById = async (
   const { id } = req.params
 
   await getEventByIdModel(id, knex)
-    .then((result) =>
-      res.status(200).json({
+    .then((result) => {
+      if (!result) {
+        next(new NotFoundError('Event not found'))
+        return
+      }
+      return res.status(200).json({
         status: 'success',
         data: result
       })
-    )
+    })
     .catch((err) => {
       next(new NotFoundError(err))
     })
@@ -55,7 +64,7 @@ const createEvent = async (
 ): Promise<void> => {
   const { body } = req
 
-  CreateEventService(body, res)
+  CreateEventService(body)
     .then((result) =>
       res.status(200).json({
         status: 'success',
@@ -75,13 +84,17 @@ const updateEvent = async (
   const { id } = req.params
   const { body } = req
 
-  updateEventService(id, body, res)
-    .then((result) =>
-      res.status(200).json({
+  updateEventService(id, body)
+    .then((result) => {
+      if (!result) {
+        next(new NotFoundError('Event not found'))
+        return
+      }
+      return res.status(200).json({
         status: 'success',
         data: result
       })
-    )
+    })
     .catch((err) => {
       next(new InternalServerError(err))
     })
@@ -106,4 +119,10 @@ const deleteEvent = async (
     })
 }
 
-export default { getEvent, createEvent, updateEvent, deleteEvent, findEventById }
+export default {
+  getEvent,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  findEventById
+}
