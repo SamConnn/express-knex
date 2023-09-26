@@ -13,6 +13,7 @@ import AppError from './utils/appError'
 
 import { errorHandler, notFoundHandler } from './lib/handlers'
 import eventRouter from './route/event.route'
+import ticketRouter from './route/ticket.route'
 import userRouter from './route/user.route'
 
 const app = express()
@@ -52,6 +53,7 @@ app.use(compression())
 
 app.use('/api/users', userRouter)
 app.use('/api/events', eventRouter)
+app.use('/api/tickets', ticketRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))

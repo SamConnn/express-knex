@@ -22,3 +22,16 @@ export const eventSchema = object({
     id: string().nullable()
   })
 })
+
+export const ticketSchema = object({
+  body: object({
+    name: string().required(),
+    description: string().required(),
+    price: string().required(),
+    quantity: string().required(),
+    event_id: string().required()
+  }),
+  params: object({
+    id: string().nullable()
+  })
+})

@@ -1,23 +1,17 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
-import knex from '../config/knex'
 import { InternalServerError, NotFoundError } from '../lib/errors'
-import { getEventByIdModel } from '../model/event.model'
-import {
-  CreateEventService,
-  deleteEventService,
-  getEventService,
-  updateEventService
-} from '../service/event.service'
+import { getTicketByEventModel, getTicketByIdModel } from '../model/ticket.model'
+import { CreateTicketService, deleteTicketService, getListofTicketByUserService, getTicketService, updateTicketService } from '../service/ticket.service'
 
-const getEvent = async (
+const getTicket = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   const { page = 1, limit = 10 } = req.query
 
-  await getEventService(Number(page), Number(limit))
+  await getTicketService(Number(page), Number(limit))
     .then(async (result) =>
       res.status(200).json({
         status: 'success',
@@ -29,14 +23,46 @@ const getEvent = async (
     })
 }
 
-const findEventById = async (
+const getListofTicketByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { page = 1, limit = 10 } = req.query
+  const userID = res.locals.user.id
+
+  await getListofTicketByUserService(Number(page), Number(limit), userID)
+    .then(async (result) =>
+      res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    )
+    .catch((err) => {
+      next(new NotFoundError(err))
+    })
+}
+
+const getTicketByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { ticketID } = req.params
+
+  await getTicketByEventModel(ticketID)
+    .then(async (result) => {
+      return res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    }
+    )
+    .catch((err) => {
+      next(new NotFoundError(err))
+    })
+}
+
+const findTicketById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params
 
-  await getEventByIdModel(id, knex)
+  await getTicketByIdModel(id)
     .then((result) => {
       if (!result) {
         next(new NotFoundError('Event not found'))
@@ -52,14 +78,14 @@ const findEventById = async (
     })
 }
 
-const createEvent = async (
+const createTicket = async (
   req: any,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   const { body } = req
 
-  CreateEventService(body)
+  CreateTicketService(res, body)
     .then((result) =>
       res.status(200).json({
         status: 'success',
@@ -71,7 +97,7 @@ const createEvent = async (
     })
 }
 
-const updateEvent = async (
+const updateTicket = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -79,7 +105,7 @@ const updateEvent = async (
   const { id } = req.params
   const { body } = req
 
-  updateEventService(id, body)
+  updateTicketService(id, body)
     .then((result) => {
       if (!result) {
         next(new NotFoundError('Event not found'))
@@ -95,14 +121,14 @@ const updateEvent = async (
     })
 }
 
-const deleteEvent = async (
+const deleteTicket = async (
   req: any,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params
 
-  deleteEventService(id)
+  deleteTicketService(id)
     .then((result) =>
       res.status(200).json({
         status: 'success',
@@ -115,9 +141,11 @@ const deleteEvent = async (
 }
 
 export default {
-  getEvent,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-  findEventById
+  getTicket,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+  findTicketById,
+  getTicketByEvent,
+  getListofTicketByUser
 }
