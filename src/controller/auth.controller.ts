@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
-import jwt, { type JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { type Knex } from 'knex'
 import {
   createSendToken,
@@ -106,21 +106,23 @@ export const protect = async (
     ) {
       token = req.headers.authorization.split(' ')[1]
     }
-
+    if (req.headers['x-api-key'] !== process.env.X_API_KEY) {
+      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
+      return
+    }
     if (!token) {
-      next(
-        new UnauthorizedError(
-          'You are not logged in! Please log in to get access.'
-        )
-      )
+      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
       return
     }
 
     // 2) Verification token
-    const decoded: JwtPayload = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as JwtPayload
+    let decoded: any
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET as string)
+    } catch (err) {
+      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
+      return
+    }
 
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
