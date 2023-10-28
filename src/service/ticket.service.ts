@@ -19,7 +19,7 @@ export const getTicketService = async (
     async () => await getTicketModel(page, limit)
   )
 
-export const getListofTicketByUserService = async (
+export const getListOfTicketByUserService = async (
   page: number,
   limit: number,
   userID: string

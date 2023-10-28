@@ -2,7 +2,7 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getTicketByEventModel, getTicketByIdModel } from '../model/ticket.model'
-import { CreateTicketService, deleteTicketService, getListofTicketByUserService, getTicketService, updateTicketService } from '../service/ticket.service'
+import { CreateTicketService, deleteTicketService, getListOfTicketByUserService, getTicketService, updateTicketService } from '../service/ticket.service'
 
 const getTicket = async (
   req: Request,
@@ -27,7 +27,7 @@ const getListofTicketByUser = async (req: Request, res: Response, next: NextFunc
   const { page = 1, limit = 10 } = req.query
   const userID = res.locals.user.id
 
-  await getListofTicketByUserService(Number(page), Number(limit), userID)
+  await getListOfTicketByUserService(Number(page), Number(limit), userID)
     .then(async (result) =>
       res.status(200).json({
         status: 'success',
