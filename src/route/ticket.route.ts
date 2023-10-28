@@ -10,7 +10,7 @@ const route = express.Router()
 route.use(authController.protect, authController.restrictTo('Admin'))
 
 route.get('/event/:ticketID', ticketController.getTicketByEvent)
-route.get('/ticket-list', ticketController.getListofTicketByUser)
+route.get('/ticket-list', ticketController.getListOfTicketByUser)
 
 route
   .get('/', ticketController.getTicket)

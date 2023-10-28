@@ -2,7 +2,12 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getTicketByEventModel, getTicketByIdModel } from '../model/ticket.model'
-import { CreateTicketService, deleteTicketService, getListOfTicketByUserService, getTicketService, updateTicketService } from '../service/ticket.service'
+import {
+  CreateTicketService,
+  deleteTicketService,
+  getListOfTicketByUserService,
+  getTicketService, updateTicketService
+} from '../service/ticket.service'
 
 const getTicket = async (
   req: Request,
@@ -23,7 +28,7 @@ const getTicket = async (
     })
 }
 
-const getListofTicketByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getListOfTicketByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { page = 1, limit = 10 } = req.query
   const userID = res.locals.user.id
 
@@ -147,5 +152,5 @@ export default {
   deleteTicket,
   findTicketById,
   getTicketByEvent,
-  getListofTicketByUser
+  getListOfTicketByUser
 }
