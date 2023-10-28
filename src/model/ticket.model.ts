@@ -20,29 +20,29 @@ export const getTicketModel = async (
     )
     .paginate({ perPage: limit, currentPage: page, isLengthAware: true })
 
-export const getListTicket = async (userID: string) =>
+export const getListTicketOfEvent = async (userID: string, page: number, limit: number) =>
   await trx(table)
     .select(
       'ticket.id',
-      'ticket.name as ticket_name',
-      'ticket.description as ticket_description',
-      'ticket.price as ticket_price',
-      'ticket.quantity as ticket_quantity',
-      'event.name as event_name',
-      'event.description as event_description',
-      'event.location as event_location',
-      'event.date as event_date',
-      'event.time as event_time'
+      'ticket.name',
+      'ticket.description',
+      'ticket.price',
+      'ticket.quantity',
+      'event.name as eventName',
+      'event.description as eventDescription',
+      'event.location as eventLocation',
+      'event.date as eventDate',
+      'event.time as eventTime'
     )
     .join('event_ticket', 'ticket.id', 'event_ticket.ticket_id')
     .join('event', 'event_ticket.event_id', 'event.id')
     .where({ user_id: userID })
+    .paginate({ perPage: limit, currentPage: page, isLengthAware: true })
 
 export const createTicketModel = async (body: any) =>
   await trx(table)
     .insert(body)
     .returning('id')
-    // join with event_ticket tabble and insert event_id and ticket_id
     .then((result) => {
       return trx('event_ticket')
         .insert({

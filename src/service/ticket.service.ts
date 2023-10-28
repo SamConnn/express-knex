@@ -5,7 +5,7 @@ import { withTransaction } from '../config/transact'
 import {
   createTicketModel,
   deleteTicketModel,
-  getListTicket,
+  getListTicketOfEvent,
   getTicketModel,
   updateTicketModel
 } from '../model/ticket.model'
@@ -26,7 +26,7 @@ export const getListofTicketByUserService = async (
 ): Promise<any> => {
   return await withTransaction(
     knex,
-    async () => await getListTicket(userID)
+    async () => await getListTicketOfEvent(userID, page, limit)
   )
 }
 
@@ -38,7 +38,7 @@ export const CreateTicketService = async (
     await createTicketModel(body).then((result) => {
       return trx('ticket').where({ id: result[0].ticket_id }).update({
         user_id: res.locals.user.id,
-        created_at: new Date()
+        created_at: knex.fn.now()
       })
     })
   })
