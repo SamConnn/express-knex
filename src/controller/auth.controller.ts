@@ -42,12 +42,7 @@ const signup = async (
     knex,
     async (trx: Knex) =>
       await createUserModel(
-        {
-          email,
-          username,
-          password: passEncrypt,
-          role
-        },
+        { email, username, password: passEncrypt, role },
         trx
       )
   )
@@ -127,11 +122,7 @@ export const protect = async (
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
     if (!currentUser) {
-      next(
-        new UnauthorizedError(
-          'The user belonging to this token does no longer exist.'
-        )
-      )
+      next(new UnauthorizedError('The user belonging to this token does no longer exist.'))
       return
     }
 

@@ -17,15 +17,8 @@ const getTicket = async (
   const { page = 1, limit = 10 } = req.query
 
   await getTicketService(Number(page), Number(limit))
-    .then(async (result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .then(async (result) => res.status(200).json(result))
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const getListOfTicketByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -33,31 +26,16 @@ const getListOfTicketByUser = async (req: Request, res: Response, next: NextFunc
   const userID = res.locals.user.id
 
   await getListOfTicketByUserService(Number(page), Number(limit), userID)
-    .then(async (result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .then(async (result) => res.status(200).json(result))
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const getTicketByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { ticketID } = req.params
 
   await getTicketByEventModel(ticketID)
-    .then(async (result) => {
-      return res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    }
-    )
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .then(async (result) => res.status(200).json(result))
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const findTicketById = async (
@@ -73,14 +51,9 @@ const findTicketById = async (
         next(new NotFoundError('Event not found'))
         return
       }
-      return res.status(200).json({
-        status: 'success',
-        data: result
-      })
+      return res.status(200).json(result)
     })
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const createTicket = async (
@@ -91,15 +64,8 @@ const createTicket = async (
   const { body } = req
 
   CreateTicketService(res, body)
-    .then((result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new InternalServerError(err))
-    })
+    .then((result) => res.status(200).json(result))
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 const updateTicket = async (
@@ -116,10 +82,7 @@ const updateTicket = async (
         next(new NotFoundError('Event not found'))
         return
       }
-      return res.status(200).json({
-        status: 'success',
-        data: result
-      })
+      return res.status(200).json(result)
     })
     .catch((err) => {
       next(new InternalServerError(err))
@@ -134,15 +97,8 @@ const deleteTicket = async (
   const { id } = req.params
 
   deleteTicketService(id)
-    .then((result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new InternalServerError(err))
-    })
+    .then((result) => res.status(200).json(result))
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 export default {
