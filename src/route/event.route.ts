@@ -9,11 +9,16 @@ const route = express.Router()
 
 route.use(authController.protect, authController.restrictTo('Admin'))
 
-route
-  .get('/', eventController.getEvent)
-  .get('/:id', eventController.findEventById)
-  .post('/', validate(eventSchema), eventController.createEvent)
-  .put('/:id', validate(eventSchema), eventController.updateEvent)
-  .delete('/:id', eventController.deleteEvent)
+const routes = [
+  { method: 'get', path: '/', middleware: [], controller: eventController.getEvent },
+  { method: 'get', path: '/:id', middleware: [], controller: eventController.findEventById },
+  { method: 'post', path: '/', middleware: [validate(eventSchema)], controller: eventController.createEvent },
+  { method: 'put', path: '/:id', middleware: [validate(eventSchema)], controller: eventController.updateEvent },
+  { method: 'delete', path: '/:id', middleware: [], controller: eventController.deleteEvent }
+]
+
+routes.forEach(({ method, path, middleware, controller }) => {
+  route[method](path, ...middleware, controller)
+})
 
 export default route

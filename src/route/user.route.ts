@@ -12,11 +12,16 @@ route.post('/log-in', authController.login)
 
 route.use(authController.protect, authController.restrictTo('Admin'))
 
-route
-  .get('/', userController.getUser)
-  .get('/:id', userController.findUserById)
-  .post('/', validate(userSchema), userController.createUser)
-  .put('/:id', validate(userSchema), userController.updateUser)
-  .delete('/:id', userController.deleteUser)
+const routes = [
+  { method: 'get', path: '/', middleware: [], controller: userController.getUser },
+  { method: 'get', path: '/:id', middleware: [], controller: userController.findUserById },
+  { method: 'post', path: '/', middleware: [validate(userSchema)], controller: userController.createUser },
+  { method: 'put', path: '/:id', middleware: [validate(userSchema)], controller: userController.updateUser },
+  { method: 'delete', path: '/:id', middleware: [], controller: userController.deleteUser }
+]
+
+routes.forEach(({ method, path, middleware, controller }) => {
+  route[method](path, ...middleware, controller)
+})
 
 export default route

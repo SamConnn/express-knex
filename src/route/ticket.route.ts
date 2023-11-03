@@ -9,14 +9,18 @@ const route = express.Router()
 
 route.use(authController.protect, authController.restrictTo('Admin'))
 
-route.get('/event/:ticketID', ticketController.getTicketByEvent)
-route.get('/ticket-list', ticketController.getListOfTicketByUser)
+const routes = [
+  { method: 'get', path: '/event/:ticketID', middleware: [], controller: ticketController.getTicketByEvent },
+  { method: 'get', path: '/ticket-list', middleware: [], controller: ticketController.getListOfTicketByUser },
+  { method: 'get', path: '/', middleware: [], controller: ticketController.getTicket },
+  { method: 'get', path: '/:id', middleware: [], controller: ticketController.findTicketById },
+  { method: 'post', path: '/', middleware: [validate(ticketSchema)], controller: ticketController.createTicket },
+  { method: 'put', path: '/:id', middleware: [validate(ticketSchema)], controller: ticketController.updateTicket },
+  { method: 'delete', path: '/:id', middleware: [], controller: ticketController.deleteTicket }
+]
 
-route
-  .get('/', ticketController.getTicket)
-  .get('/:id', ticketController.findTicketById)
-  .post('/', validate(ticketSchema), ticketController.createTicket)
-  .put('/:id', validate(ticketSchema), ticketController.updateTicket)
-  .delete('/:id', ticketController.deleteTicket)
+routes.forEach(({ method, path, middleware, controller }) => {
+  route[method](path, ...middleware, controller)
+})
 
 export default route
