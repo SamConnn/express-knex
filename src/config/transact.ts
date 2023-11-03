@@ -1,4 +1,5 @@
 import type { Knex } from 'knex'
+import { InternalServerError } from '../lib/errors'
 
 interface TransactionOptions {
   isolationLevel?: Knex.IsolationLevels
@@ -27,7 +28,7 @@ export async function withTransaction<T> (
   }
 
   if (error != null) {
-    throw error
+    return new InternalServerError(error.message) as T
   }
 
   return result
