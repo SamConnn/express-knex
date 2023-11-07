@@ -36,10 +36,7 @@ const findUserById = async (
 
   await getUserByIdModel(id, knex)
     .then((result) => {
-      if (!result) {
-        next(new NotFoundError('User not found'))
-        return
-      }
+      if (!result) { next(new NotFoundError('User not found')); return }
       return res.status(200).json(result)
     })
     .catch((err) => { next(new NotFoundError(err)) })
@@ -67,10 +64,7 @@ const updateUser = async (
 
   updateUserService(id, body)
     .then((result) => {
-      if (!result) {
-        next(new NotFoundError('User not found'))
-        return
-      }
+      if (!result) { next(new NotFoundError('User not found')); return }
       return res.status(200).json(result)
     })
     .catch((err) => { next(new InternalServerError(err)) })

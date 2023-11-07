@@ -11,7 +11,7 @@ route.use(authController.protect, authController.restrictTo('Admin'))
 
 const routes = [
   { method: 'get', path: '/event/:ticketID', middleware: [], func: ticketController.getTicketByEvent },
-  { method: 'get', path: '/ticket-list', middleware: [], func: ticketController.getListOfTicketUser },
+  { method: 'get', path: '/user-ticket', middleware: [], func: ticketController.getListOfTicketUser },
   { method: 'get', path: '/', middleware: [], func: ticketController.getTicket },
   { method: 'get', path: '/:id', middleware: [], func: ticketController.findTicketById },
   { method: 'post', path: '/', middleware: [validate(ticketSchema)], func: ticketController.createTicket },

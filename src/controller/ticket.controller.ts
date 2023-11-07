@@ -47,10 +47,7 @@ const findTicketById = async (
 
   await getTicketByIdModel(id)
     .then((result) => {
-      if (!result) {
-        next(new NotFoundError('Event not found'))
-        return
-      }
+      if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
     .catch((err) => { next(new NotFoundError(err)) })
@@ -78,10 +75,7 @@ const updateTicket = async (
 
   updateTicketService(id, body)
     .then((result) => {
-      if (!result) {
-        next(new NotFoundError('Event not found'))
-        return
-      }
+      if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
     .catch((err) => {
