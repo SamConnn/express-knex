@@ -9,10 +9,10 @@ import hpp from 'hpp'
 import morgan from 'morgan'
 import path from 'path'
 
+import NotFoundError from './lib/errors/NotFoundError'
 import { errorHandler, notFoundHandler } from './lib/handlers'
 import logger from './lib/logger/logger'
 import { routes } from './route'
-import AppError from './utils/appError'
 import useRoutes from './utils/route'
 
 const app = express()
@@ -42,7 +42,7 @@ app.use(hpp({}))
 app.use(compression())
 useRoutes(app, routes)
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
+  throw new NotFoundError(`Can't find ${req.originalUrl} on this server!`)
 })
 app.use(notFoundHandler)
 //Error Handler
