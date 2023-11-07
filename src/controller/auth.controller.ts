@@ -50,9 +50,7 @@ const signup = async (
       createSendToken(result[0], 201, req, res)
       await Email(result[0], url).sendWelcome()
     })
-    .catch((err) => {
-      next(new InternalServerError(err.message))
-    })
+    .catch((err) => { next(new InternalServerError(err.message)) })
 }
 
 export const login = async (

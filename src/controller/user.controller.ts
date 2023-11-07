@@ -23,15 +23,8 @@ const getUser = async (
   const { page = 1, limit = 10 } = req.query
 
   await getUserService(Number(page), Number(limit))
-    .then(async (result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .then(async (result) => res.status(200).json(result))
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const findUserById = async (
@@ -47,14 +40,9 @@ const findUserById = async (
         next(new NotFoundError('User not found'))
         return
       }
-      return res.status(200).json({
-        status: 'success',
-        data: result
-      })
+      return res.status(200).json(result)
     })
-    .catch((err) => {
-      next(new NotFoundError(err))
-    })
+    .catch((err) => { next(new NotFoundError(err)) })
 }
 
 const createUser = async (
@@ -65,15 +53,8 @@ const createUser = async (
   const { body } = req
 
   CreateUserService(body, next)
-    .then((result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new InternalServerError(err))
-    })
+    .then((result) => res.status(200).json(result))
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 const updateUser = async (
@@ -90,15 +71,9 @@ const updateUser = async (
         next(new NotFoundError('User not found'))
         return
       }
-      return res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    }
-    )
-    .catch((err) => {
-      next(new InternalServerError(err))
+      return res.status(200).json(result)
     })
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 const deleteUser = async (
@@ -109,15 +84,8 @@ const deleteUser = async (
   const { id } = req.params
 
   deleteUserService(id)
-    .then((result) =>
-      res.status(200).json({
-        status: 'success',
-        data: result
-      })
-    )
-    .catch((err) => {
-      next(new InternalServerError(err))
-    })
+    .then((result) => res.status(200).json(result))
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 export default { getUser, createUser, updateUser, deleteUser, findUserById }
