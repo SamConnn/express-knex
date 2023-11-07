@@ -5,8 +5,7 @@ interface Route {
   router: express.Router
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const loopRoute = (routes: any, route: any) => {
+export const loopRoute = (routes: any, route: any): void => {
   routes.forEach(({ method, path, middleware, controller }) => {
     route[method](path, ...middleware, controller)
   })
