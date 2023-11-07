@@ -10,52 +10,34 @@ import {
   updateTicketModel
 } from '../model/ticket.model'
 
-export const getTicketService = async (
+export const search = async (
   page: number,
   limit: number
-): Promise<any> =>
-  await withTransaction(
-    knex,
-    async () => await getTicketModel(page, limit)
-  )
+): Promise<any> => await withTransaction(knex, async () => await getTicketModel(page, limit))
 
-export const getListOfTicketByUserService = async (
+export const getListOfTicketByUser = async (
   page: number,
   limit: number,
   userID: string
-): Promise<any> => {
-  return await withTransaction(
-    knex,
-    async () => await getListTicketOfEvent(userID, page, limit)
-  )
-}
+): Promise<any> => await withTransaction(knex, async () => await getListTicketOfEvent(userID, page, limit))
 
-export const CreateTicketService = async (
+export const create = async (
   res: any,
   body: any
 ): Promise<any> => {
-  await withTransaction(knex, async (trx: Knex) => {
-    await createTicketModel(body).then((result) => {
-      return trx('ticket').where({ id: result[0].ticket_id }).update({
-        user_id: res.locals.user.id,
-        created_at: knex.fn.now()
-      })
+  await withTransaction(knex, async (trx: Knex) => await createTicketModel(body).then((result) => {
+    return trx('ticket').where({ id: result[0].ticket_id }).update({
+      user_id: res.locals.user.id,
+      created_at: knex.fn.now()
     })
-  })
+  }))
 }
 
-export const updateTicketService = async (
+export const update = async (
   id: string,
   body: any
-): Promise<any> => {
-  return await withTransaction(
-    knex,
-    async () => await updateTicketModel(id, body)
-  )
-}
+): Promise<any> => await withTransaction(knex, async () => await updateTicketModel(id, body))
 
-export const deleteTicketService = async (id: string): Promise<any> =>
-  await withTransaction(
-    knex,
-    async () => await deleteTicketModel(id)
-  )
+export const destroy = async (
+  id: string
+): Promise<any> => await withTransaction(knex, async () => await deleteTicketModel(id))

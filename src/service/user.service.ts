@@ -13,16 +13,12 @@ import {
   updateUserModel
 } from '../model/user.model'
 
-export const getUserService = async (
+export const search = async (
   page: number,
   limit: number
-): Promise<any> =>
-  await withTransaction(
-    knex,
-    async (trx: Knex) => await getUserModel(trx, page, limit)
-  )
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getUserModel(trx, page, limit))
 
-export const CreateUserService = async (body: any, next: NextFunction): Promise<any> => {
+export const create = async (body: any, next: NextFunction): Promise<any> => {
   const { email, password } = body
   const isUserExist = await findUserByEmail(email, knex)
 
@@ -43,18 +39,11 @@ export const CreateUserService = async (body: any, next: NextFunction): Promise<
   )
 }
 
-export const updateUserService = async (
+export const update = async (
   id: string,
   body: any
-): Promise<any> => {
-  return await withTransaction(
-    knex,
-    async (trx: Knex) => await updateUserModel(id, body, trx)
-  )
-}
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await updateUserModel(id, body, trx))
 
-export const deleteUserService = async (id: string): Promise<any> =>
-  await withTransaction(
-    knex,
-    async (trx: Knex) => await deleteUserModel(id, trx)
-  )
+export const destroy = async (
+  id: string
+): Promise<any> => await withTransaction(knex, async (trx: Knex) => await deleteUserModel(id, trx))

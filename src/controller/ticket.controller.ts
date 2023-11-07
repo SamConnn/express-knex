@@ -3,10 +3,10 @@ import { type NextFunction, type Request, type Response } from 'express'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getTicketByEventModel, getTicketByIdModel } from '../model/ticket.model'
 import {
-  CreateTicketService,
-  deleteTicketService,
-  getListOfTicketByUserService,
-  getTicketService, updateTicketService
+  create as createTicketService,
+  destroy as deleteTicketService,
+  getListOfTicketByUser,
+  search as getTicketService, update as updateTicketService
 } from '../service/ticket.service'
 
 const getTicket = async (
@@ -21,11 +21,11 @@ const getTicket = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const getListOfTicketByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getListOfTicketUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { page = 1, limit = 10 } = req.query
   const userID = res.locals.user.id
 
-  await getListOfTicketByUserService(Number(page), Number(limit), userID)
+  await getListOfTicketByUser(Number(page), Number(limit), userID)
     .then(async (result) => res.status(200).json(result))
     .catch((err) => { next(new NotFoundError(err)) })
 }
@@ -63,7 +63,7 @@ const createTicket = async (
 ): Promise<void> => {
   const { body } = req
 
-  CreateTicketService(res, body)
+  createTicketService(res, body)
     .then((result) => res.status(200).json(result))
     .catch((err) => { next(new InternalServerError(err)) })
 }
@@ -108,5 +108,5 @@ export default {
   deleteTicket,
   findTicketById,
   getTicketByEvent,
-  getListOfTicketByUser
+  getListOfTicketUser
 }

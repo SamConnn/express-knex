@@ -4,10 +4,10 @@ import knex from '../config/knex'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getEventByIdModel } from '../model/event.model'
 import {
-  CreateEventService,
-  deleteEventService,
-  getEventService,
-  updateEventService
+  create as CreateEventService,
+  destroy as deleteEventService,
+  search as getEventService,
+  update as updateEventService
 } from '../service/event.service'
 
 const getEvent = async (

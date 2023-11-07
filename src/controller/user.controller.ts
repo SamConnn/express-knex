@@ -4,10 +4,10 @@ import knex from '../config/knex'
 import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getUserByIdModel } from '../model/user.model'
 import {
-  CreateUserService,
-  deleteUserService,
-  getUserService,
-  updateUserService
+  create as CreateUserService,
+  destroy as deleteUserService,
+  search as getUserService,
+  update as updateUserService
 } from '../service/user.service'
 
 // const redis = createClient({
