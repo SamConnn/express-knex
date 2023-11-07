@@ -78,9 +78,7 @@ const updateTicket = async (
       if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err) => {
-      next(new InternalServerError(err))
-    })
+    .catch((err) => { next(new InternalServerError(err)) })
 }
 
 const deleteTicket = async (
