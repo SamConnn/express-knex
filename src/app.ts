@@ -3,7 +3,6 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
-import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import hpp from 'hpp'
 import morgan from 'morgan'
@@ -13,6 +12,7 @@ import NotFoundError from './lib/errors/NotFoundError'
 import { errorHandler, notFoundHandler } from './lib/handlers'
 import logger from './lib/logger/logger'
 import { routes } from './route'
+import { limiter } from './utils/rate-limit'
 import useRoutes from './utils/route'
 
 const app = express()
@@ -28,11 +28,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP, please try again in an hour!'
-})
 app.use('/api', limiter)
 app.use(bodyParser.json({ limit: '10kb' }))
 app.use(express.json({ limit: '10kb' }))
