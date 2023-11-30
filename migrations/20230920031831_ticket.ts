@@ -2,7 +2,7 @@ import { type Knex } from 'knex'
 
 export async function up (knex: Knex): Promise<void> {
   await knex.schema.createTable('ticket', table => {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+    table.uuid('id').primary()
     table.string('name').notNullable().unique()
     table.string('description').nullable()
     table.string('price').notNullable()
