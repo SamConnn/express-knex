@@ -65,7 +65,7 @@ const Email = (user: User, url: string) => {
   }
 
   const sendWelcome = async () => {
-    await send('welcome', 'Welcome to the Natours Family!')
+    await send('welcome', 'Welcome to the Dinal Family!')
   }
 
   const sendPasswordReset = async () => {
