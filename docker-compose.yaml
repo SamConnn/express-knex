@@ -1,21 +1,13 @@
-version: "3.8"
-
-networks:
-  backend:
-    name: laradock_backend
-    driver: bridge
-
+version: '2.1'
 services:
-  backend:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+  frontend:
+    build: .
+    image: backend
+    container_name: ticket-backend
+    hostname: ticket-backend
     ports:
-      - "8080:8080"
-    volumes:
-      - .:/app
-      - /app/node_modules
-    env_file:
-      - .env
-    networks:
-      - backend
+      - "8181:8181"
+networks:
+    default:
+      external:
+        name: frontendnet
