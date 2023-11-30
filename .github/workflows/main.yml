@@ -14,7 +14,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: SSH and build Docker image
-      uses: SamConnn/ssh-action@main
       with:
         host: 172.104.43.12
         username: root
