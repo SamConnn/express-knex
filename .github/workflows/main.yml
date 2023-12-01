@@ -1,0 +1,24 @@
+name: Build Docker Image on Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: SSH and build Docker image
+      uses: SamConnn/ticket-backend@main
+      with:
+        host: 172.104.43.12
+        username: root
+        password: ${{ secrets.SERVER_PASSWORD }}
+        script: |
+          cd /path/to/dockerfile
+          docker-compose up --build -d
