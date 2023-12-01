@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import knex from '../config/knex'
-import { InternalServerError, NotFoundError } from '../lib/errors'
+import { NotFoundError } from '../lib/errors'
 import { getUserByIdModel } from '../model/user.model'
 import {
   create as CreateUserService,
@@ -9,6 +9,7 @@ import {
   search as getUserService,
   update as updateUserService
 } from '../service/user.service'
+import { responseError } from '../utils/error-handler'
 
 // const redis = createClient({
 //   password: 'secret_redis'
@@ -24,7 +25,7 @@ export const getUser = async (
 
   await getUserService(Number(page), Number(limit))
     .then(async (result) => res.status(200).json(result))
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const findUserById = async (
@@ -39,7 +40,7 @@ export const findUserById = async (
       if (!result) { next(new NotFoundError('User not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const createUser = async (
@@ -51,7 +52,7 @@ export const createUser = async (
 
   CreateUserService(body, next)
     .then((result) => res.status(200).json(result))
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const updateUser = async (
@@ -67,7 +68,7 @@ export const updateUser = async (
       if (!result) { next(new NotFoundError('User not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const deleteUser = async (
@@ -79,5 +80,5 @@ export const deleteUser = async (
 
   deleteUserService(id)
     .then((result) => res.status(200).json(result))
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }

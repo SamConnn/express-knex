@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
-import { InternalServerError, NotFoundError } from '../lib/errors'
+import { NotFoundError } from '../lib/errors'
 import { getTicketByEventModel, getTicketByIdModel } from '../model/ticket.model'
 import {
   create as createTicketService,
@@ -8,6 +8,7 @@ import {
   getListOfTicketByUser,
   search as getTicketService, update as updateTicketService
 } from '../service/ticket.service'
+import { responseError } from '../utils/error-handler'
 
 export const getTicket = async (
   req: Request,
@@ -18,7 +19,7 @@ export const getTicket = async (
 
   await getTicketService(Number(page), Number(limit))
     .then(async (result) => res.status(200).json(result))
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const getListOfTicketUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -27,7 +28,7 @@ export const getListOfTicketUser = async (req: Request, res: Response, next: Nex
 
   await getListOfTicketByUser(Number(page), Number(limit), userID)
     .then(async (result) => res.status(200).json(result))
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const getTicketByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -35,7 +36,7 @@ export const getTicketByEvent = async (req: Request, res: Response, next: NextFu
 
   await getTicketByEventModel(ticketID)
     .then(async (result) => res.status(200).json(result))
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const findTicketById = async (
@@ -50,7 +51,7 @@ export const findTicketById = async (
       if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err) => { next(new NotFoundError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const createTicket = async (
@@ -62,7 +63,7 @@ export const createTicket = async (
 
   createTicketService(res, body)
     .then((result) => res.status(200).json(result))
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const updateTicket = async (
@@ -78,7 +79,7 @@ export const updateTicket = async (
       if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }
 
 export const deleteTicket = async (
@@ -90,5 +91,5 @@ export const deleteTicket = async (
 
   deleteTicketService(id)
     .then((result) => res.status(200).json(result))
-    .catch((err) => { next(new InternalServerError(err)) })
+    .catch((err) => responseError(res, err))
 }

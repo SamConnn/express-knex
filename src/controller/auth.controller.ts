@@ -33,8 +33,7 @@ export const signup = async (
   const isUserExist = await findUserByEmail(email, knex)
 
   if (isUserExist.length > 0) {
-    next(new CustomError('User already exist', 'Can not create user', 400))
-    return
+    throw new CustomError('User already exist', 'Can not create user', 400)
   }
   const passEncrypt = await encryptPassword(password)
 
@@ -62,13 +61,12 @@ export const login = async (
 
   // 1) Check if email and password exist
   if (!email ?? !password) {
-    next(new CustomError('Please provide email and password!', '', 400))
-    return
+    throw new CustomError('Please provide email and password!', '', 400)
   }
 
   await findUserByEmail(email, knex).then(async (result) => {
     if (result.length === 0) {
-      next(new CustomError('User not found', '', 404))
+      throw new CustomError('User not found', '', 404)
     } else {
       const isPasswordCorrect = await decryptPassword(
         password,
@@ -76,8 +74,7 @@ export const login = async (
       )
 
       if (!isPasswordCorrect) {
-        next(new CustomError('Incorrect email or password', '', 401))
-        return
+        throw new CustomError('Incorrect email or password', '', 401)
       }
 
       createSendToken(result[0], 200, req, res)
@@ -100,12 +97,10 @@ export const protect = async (
       token = req.headers.authorization.split(' ')[1]
     }
     if (req.headers['x-api-key'] !== process.env.X_API_KEY) {
-      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
-      return
+      throw new UnauthorizedError('You are not logged in! Please log in to get access.')
     }
     if (!token) {
-      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
-      return
+      throw new UnauthorizedError('You are not logged in! Please log in to get access.')
     }
 
     // 2) Verification token
@@ -113,15 +108,13 @@ export const protect = async (
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET as string)
     } catch (err) {
-      next(new UnauthorizedError('You are not logged in! Please log in to get access.'))
-      return
+      throw new UnauthorizedError('You are not logged in! Please log in to get access.')
     }
 
     // 3) Check if user still exists
     const currentUser = await getUserByIdModel(decoded.id, knex)
     if (!currentUser) {
-      next(new UnauthorizedError('The user belonging to this token does no longer exist.'))
-      return
+      throw new UnauthorizedError('The user belonging to this token does no longer exist.')
     }
 
     /* to be implemented later */
@@ -149,24 +142,14 @@ export const restrictTo = (...roles: string[]) => {
     const { id } = res.locals.user
 
     if (!roles.includes(res.locals.user.role)) {
-      next(
-        new UnauthorizedError(
-          'You do not have permission to perform this action'
-        )
-      )
-      return
+      throw new UnauthorizedError('You do not have permission to perform this action')
     }
 
     // Check if user still exists
     const findRole = await getUserByIdModel(id, knex)
 
     if (!findRole || findRole.role !== 'Admin') {
-      next(
-        new UnauthorizedError(
-          'You do not have permission to perform this action'
-        )
-      )
-      return
+      throw new UnauthorizedError('You do not have permission to perform this action')
     }
     next()
   }
