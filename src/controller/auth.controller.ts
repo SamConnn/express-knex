@@ -21,7 +21,7 @@ import {
 } from '../model/user.model'
 import Email from '../utils/email'
 
-const signup = async (
+export const signup = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -171,5 +171,3 @@ export const restrictTo = (...roles: string[]) => {
     next()
   }
 }
-
-export default { signup, login, protect, restrictTo }

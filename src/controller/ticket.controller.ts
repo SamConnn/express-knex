@@ -9,7 +9,7 @@ import {
   search as getTicketService, update as updateTicketService
 } from '../service/ticket.service'
 
-const getTicket = async (
+export const getTicket = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -21,7 +21,7 @@ const getTicket = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const getListOfTicketUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getListOfTicketUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { page = 1, limit = 10 } = req.query
   const userID = res.locals.user.id
 
@@ -30,7 +30,7 @@ const getListOfTicketUser = async (req: Request, res: Response, next: NextFuncti
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const getTicketByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getTicketByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { ticketID } = req.params
 
   await getTicketByEventModel(ticketID)
@@ -38,7 +38,7 @@ const getTicketByEvent = async (req: Request, res: Response, next: NextFunction)
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const findTicketById = async (
+export const findTicketById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -53,7 +53,7 @@ const findTicketById = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const createTicket = async (
+export const createTicket = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -65,7 +65,7 @@ const createTicket = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const updateTicket = async (
+export const updateTicket = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -81,7 +81,7 @@ const updateTicket = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const deleteTicket = async (
+export const deleteTicket = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -91,14 +91,4 @@ const deleteTicket = async (
   deleteTicketService(id)
     .then((result) => res.status(200).json(result))
     .catch((err) => { next(new InternalServerError(err)) })
-}
-
-export default {
-  getTicket,
-  createTicket,
-  updateTicket,
-  deleteTicket,
-  findTicketById,
-  getTicketByEvent,
-  getListOfTicketUser
 }

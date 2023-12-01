@@ -10,7 +10,7 @@ import {
   update as updateEventService
 } from '../service/event.service'
 
-const getEvent = async (
+export const getEvent = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,7 +22,7 @@ const getEvent = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const findEventById = async (
+export const findEventById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -37,7 +37,7 @@ const findEventById = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const createEvent = async (
+export const createEvent = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -49,7 +49,7 @@ const createEvent = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const updateEvent = async (
+export const updateEvent = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -65,7 +65,7 @@ const updateEvent = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const deleteEvent = async (
+export const deleteEvent = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -75,12 +75,4 @@ const deleteEvent = async (
   deleteEventService(id)
     .then((result) => res.status(200).json(result))
     .catch((err) => { next(new InternalServerError(err)) })
-}
-
-export default {
-  getEvent,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-  findEventById
 }

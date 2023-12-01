@@ -15,7 +15,7 @@ import {
 // })
 // void redis.connect()
 
-const getUser = async (
+export const getUser = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -27,7 +27,7 @@ const getUser = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const findUserById = async (
+export const findUserById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -42,7 +42,7 @@ const findUserById = async (
     .catch((err) => { next(new NotFoundError(err)) })
 }
 
-const createUser = async (
+export const createUser = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -54,7 +54,7 @@ const createUser = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const updateUser = async (
+export const updateUser = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -70,7 +70,7 @@ const updateUser = async (
     .catch((err) => { next(new InternalServerError(err)) })
 }
 
-const deleteUser = async (
+export const deleteUser = async (
   req: any,
   res: Response,
   next: NextFunction
@@ -81,5 +81,3 @@ const deleteUser = async (
     .then((result) => res.status(200).json(result))
     .catch((err) => { next(new InternalServerError(err)) })
 }
-
-export default { getUser, createUser, updateUser, deleteUser, findUserById }
