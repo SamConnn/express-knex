@@ -5,7 +5,7 @@ interface Route {
   router: express.Router
 }
 
-export const loopRoute = (routes: any, route: any): void => {
+export const Routes = (routes: any, route: any): void => {
   routes.forEach(({ method, path, middleware, controller }) => {
     route[method](path, ...middleware, controller)
   })

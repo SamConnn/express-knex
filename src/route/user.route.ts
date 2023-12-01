@@ -3,7 +3,7 @@ import express from 'express'
 import authController from '../controller/auth.controller'
 import userController from '../controller/user.controller'
 import { validateRequest } from '../middleware/validate'
-import { loopRoute } from '../utils/route'
+import { Routes } from '../utils/route'
 import { userSchema } from '../utils/validator'
 
 const route = express.Router()
@@ -21,6 +21,6 @@ const routes = [
   { method: 'delete', path: '/:id', middleware: [], controller: userController.deleteUser }
 ]
 
-loopRoute(routes, route)
+Routes(routes, route)
 
 export default route
