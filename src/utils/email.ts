@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import dotenv from 'dotenv'
 import nodemailer from 'nodemailer'
 dotenv.config()
@@ -18,11 +17,14 @@ interface EmailOptions {
   text: string
 }
 
-const Email = (user: User, url: string) => {
+const Email = (user: User, url: string): {
+  sendWelcome: () => Promise<any>
+  sendPasswordReset: () => Promise<void>
+} => {
   const to = user.email
   const from = `Sammy <${process.env.EMAIL_FROM}>`
 
-  const newTransport = () => {
+  const newTransport = async (): Promise<any> => {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid
       return nodemailer.createTransport({
@@ -44,7 +46,7 @@ const Email = (user: User, url: string) => {
     })
   }
 
-  const send = async (template: string, subject: string) => {
+  const send = async (template: string, subject: string): Promise<void> => {
     // 1) Render HTML based on a pug template
     const html = `
       <div> ${template} </div>
@@ -61,14 +63,15 @@ const Email = (user: User, url: string) => {
     }
 
     // 3) Create a transport and send email
-    await newTransport().sendMail(mailOptions)
+    const transport = await newTransport()
+    await transport.sendMail(mailOptions)
   }
 
-  const sendWelcome = async () => {
-    await send('welcome', 'Welcome to the Dinal Family!')
+  const sendWelcome = async (): Promise<any> => {
+    await send('welcome', 'Welcome to the Natours Family!')
   }
 
-  const sendPasswordReset = async () => {
+  const sendPasswordReset = async (): Promise<void> => {
     await send(
       'passwordReset',
       'Your password reset token (valid for only 10 minutes)'

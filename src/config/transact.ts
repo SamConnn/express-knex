@@ -28,7 +28,7 @@ export async function withTransaction<T> (
   }
 
   if (error != null) {
-    return new InternalServerError(error.message) as T
+    throw new InternalServerError(error.message)
   }
 
   return result

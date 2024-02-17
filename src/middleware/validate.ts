@@ -9,7 +9,7 @@ export const validateRequest = (schema: any) => async (req: Request, res: any, n
       params: req.params
     })
     next()
-  } catch (err: any) {
-    next(new BadRequestError(err.message))
+  } catch (err: string | any) {
+    next(new BadRequestError(err.message as string))
   }
 }

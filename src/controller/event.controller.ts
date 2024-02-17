@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type NextFunction, type Request, type Response } from 'express'
 import knex from '../config/knex'
-import { NotFoundError } from '../lib/errors'
+import { InternalServerError, NotFoundError } from '../lib/errors'
 import { getEventByIdModel } from '../model/event.model'
 import {
   create as CreateEventService,
@@ -19,8 +19,16 @@ export const getEvent = async (
   const { page = 1, limit = 10 } = req.query
 
   await getEventService(Number(page), Number(limit))
-    .then(async (result) => res.status(200).json(result))
-    .catch((err) => responseError(res, err))
+    .then(async (result) => {
+      res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    }
+    )
+    .catch((err: string) => {
+      next(new NotFoundError(err))
+    })
 }
 
 export const findEventById = async (
@@ -30,10 +38,19 @@ export const findEventById = async (
 ): Promise<void> => {
   const { id } = req.params
 
-  await getEventByIdModel(id, knex)
+  await getEventByIdModel(String(id), knex)
     .then((result) => {
-      if (!result) throw new NotFoundError('Event not found')
-      return res.status(200).json(result)
+      if (!result) {
+        next(new NotFoundError('Event not found'))
+        return
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    })
+    .catch((err: string) => {
+      next(new NotFoundError(err))
     })
     .catch((err) => responseError(res, err))
 }
@@ -46,8 +63,15 @@ export const createEvent = async (
   const { body } = req
 
   CreateEventService(body)
-    .then((result) => res.status(200).json(result))
-    .catch((err) => responseError(res, err))
+    .then((result) =>
+      res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    )
+    .catch((err: string) => {
+      next(new InternalServerError(err))
+    })
 }
 
 export const updateEvent = async (
@@ -58,10 +82,19 @@ export const updateEvent = async (
   const { id } = req.params
   const { body } = req
 
-  updateEventService(id, body)
+  updateEventService(String(id), body)
     .then((result) => {
-      if (!result) throw new NotFoundError('Event not found')
-      return res.status(200).json(result)
+      if (!result) {
+        next(new NotFoundError('Event not found'))
+        return
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    })
+    .catch((err: string) => {
+      next(new InternalServerError(err))
     })
     .catch((err) => responseError(res, err))
 }
@@ -73,7 +106,14 @@ export const deleteEvent = async (
 ): Promise<void> => {
   const { id } = req.params
 
-  deleteEventService(id)
-    .then((result) => res.status(200).json(result))
-    .catch((err) => responseError(res, err))
+  deleteEventService(String(id))
+    .then((result) =>
+      res.status(200).json({
+        status: 'success',
+        data: result
+      })
+    )
+    .catch((err: string) => {
+      next(new InternalServerError(err))
+    })
 }

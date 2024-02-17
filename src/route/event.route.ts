@@ -1,31 +1,33 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express'
+import { type Request, type Response, type NextFunction } from 'express'
 import {
-  protect, restrictTo
-} from '../controller/auth.controller'
-import {
-  createEvent,
-  deleteEvent,
-  findEventById,
   getEvent,
-  updateEvent
+  findEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent
 } from '../controller/event.controller'
 import { validateRequest } from '../middleware/validate'
-import { Routes } from '../utils/route'
 import { eventSchema } from '../utils/validator'
+import { applyRoutes } from '../utils/route'
+import { protect, restrictTo } from '../controller/auth.controller'
+
+type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>
+type Route = [string, string, MiddlewareFunction[], MiddlewareFunction]
 
 const route = express.Router()
 
 route.use(protect, restrictTo('Admin'))
 
-const routes = [
-  { method: 'get', path: '/', middleware: [], controller: getEvent },
-  { method: 'get', path: '/:id', middleware: [], controller: findEventById },
-  { method: 'post', path: '/', middleware: [validateRequest(eventSchema)], controller: createEvent },
-  { method: 'put', path: '/:id', middleware: [validateRequest(eventSchema)], controller: updateEvent },
-  { method: 'delete', path: '/:id', middleware: [], controller: deleteEvent }
+const routes: Route[] = [
+  ['get', '/', [], getEvent],
+  ['get', '/:id', [], findEventById],
+  ['post', '/', [validateRequest(eventSchema)], createEvent],
+  ['put', '/:id', [validateRequest(eventSchema)], updateEvent],
+  ['delete', '/:id', [], deleteEvent]
 ]
 
-Routes(routes, route)
+applyRoutes(routes, route)
 
 export default route

@@ -2,19 +2,19 @@
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import { type Request, type Response } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { type Secret } from 'jsonwebtoken'
 dotenv.config({ path: './.env' })
 
 const { JWT_SECRET, JWT_EXPIRES_IN, JWT_COOKIE_EXPIRES_IN } = process.env
 
 const signToken = (id: string): string => {
-  const secret = JWT_SECRET as string
+  const secret = JWT_SECRET as Secret
   return jwt.sign({ id }, secret, {
     expiresIn: JWT_EXPIRES_IN
   })
 }
 
-interface User {
+export interface User {
   id: string
   username: string
   email: string

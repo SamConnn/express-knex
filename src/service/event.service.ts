@@ -7,7 +7,7 @@ import { createEventModel, deleteEventModel, getEventModel, updateEventModel } f
 export const search = async (
   page: number,
   limit: number
-): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getEventModel(trx, page, limit))
+): Promise<any> => await getEventModel(page, limit)
 
 export const create = async (
   body: any

@@ -1,13 +1,17 @@
 import type express from 'express'
+import { type Router } from 'express'
+import { type RequestHandler } from 'express-serve-static-core'
 
 interface Route {
   path: string
   router: express.Router
 }
 
-export const Routes = (routes: any, route: any): void => {
-  routes.forEach(({ method, path, middleware, controller }) => {
-    route[method](path, ...middleware, controller)
+type Routes = [string, string, RequestHandler[], RequestHandler]
+
+export const applyRoutes = (routes: Routes[], router: Router): void => {
+  routes.forEach(([method, path, middleware, controller]) => {
+    router[method](path, ...middleware, controller)
   })
 }
 

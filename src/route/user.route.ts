@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express'
 import { login, protect, restrictTo, signup } from '../controller/auth.controller'
-import { createUser, deleteUser, findUserById, getUser, updateUser } from '../controller/user.controller'
 import { validateRequest } from '../middleware/validate'
-import { Routes } from '../utils/route'
+import { type Request, type Response, type NextFunction } from 'express'
+import {
+  getUser,
+  findUserById,
+  createUser,
+  updateUser,
+  deleteUser
+} from '../controller/user.controller'
 import { userSchema } from '../utils/validator'
+import { applyRoutes } from '../utils/route'
+
+type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>
+type Route = [string, string, MiddlewareFunction[], MiddlewareFunction]
 
 const route = express.Router()
 
@@ -13,14 +23,14 @@ route.post('/log-in', login)
 
 route.use(protect, restrictTo('Admin'))
 
-const routes = [
-  { method: 'get', path: '/', middleware: [], controller: getUser },
-  { method: 'get', path: '/:id', middleware: [], controller: findUserById },
-  { method: 'post', path: '/', middleware: [validateRequest(userSchema)], controller: createUser },
-  { method: 'put', path: '/:id', middleware: [validateRequest(userSchema)], controller: updateUser },
-  { method: 'delete', path: '/:id', middleware: [], controller: deleteUser }
+const routes: Route[] = [
+  ['get', '/', [], getUser],
+  ['get', '/:id', [], findUserById],
+  ['post', '/', [validateRequest(userSchema)], createUser],
+  ['put', '/:id', [validateRequest(userSchema)], updateUser],
+  ['delete', '/:id', [], deleteUser]
 ]
 
-Routes(routes, route)
+applyRoutes(routes, route)
 
 export default route
