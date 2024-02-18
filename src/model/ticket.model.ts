@@ -4,30 +4,27 @@ import knex from '../config/knex'
 const trx = knex
 const table = 'ticket'
 
+const ticketFields = [
+  'ticket.id',
+  'ticket.name',
+  'ticket.description',
+  'ticket.price',
+  'ticket.quantity',
+  'ticket.created_at',
+  'ticket.updated_at'
+]
+
 export const getTicketModel = async (
   page: number,
   limit: number
 ): Promise<any> =>
-  await trx(table)
-    .select(
-      'ticket.id',
-      'ticket.name',
-      'ticket.description',
-      'ticket.price',
-      'ticket.quantity',
-      'ticket.created_at',
-      'ticket.updated_at'
-    )
+  await knex(table)
+    .select(ticketFields)
     .paginate({ perPage: limit, currentPage: page, isLengthAware: true })
 
 export const getListTicketOfEvent = async (userID: string, page: number, limit: number) =>
-  await trx(table)
-    .select(
-      'ticket.id',
-      'ticket.name',
-      'ticket.description',
-      'ticket.price',
-      'ticket.quantity',
+  await knex(table)
+    .select(...ticketFields,
       'event.name as eventName',
       'event.description as eventDescription',
       'event.location as eventLocation',
@@ -54,16 +51,8 @@ export const createTicketModel = async (body: any) =>
     })
 
 export const getTicketByIdModel = async (id: string) =>
-  await trx(table)
-    .select(
-      'ticket.id',
-      'ticket.name',
-      'ticket.description',
-      'ticket.price',
-      'ticket.quantity',
-      'ticket.created_at',
-      'ticket.updated_at'
-    )
+  await knex(table)
+    .select(ticketFields)
     .where({ id })
     .first()
 
@@ -74,13 +63,8 @@ export const deleteTicketModel = async (id: string) =>
   await trx(table).del().where({ id }).returning('*')
 
 export const getTicketByEventModel = async (ticketId: string) =>
-  await trx(table)
-    .select(
-      'ticket.id',
-      'ticket.name as ticket_name',
-      'ticket.description as ticket_description',
-      'ticket.price as ticket_price',
-      'ticket.quantity as ticket_quantity',
+  await knex(table)
+    .select(...ticketFields,
       'event.name as event_name',
       'event.description as event_description',
       'event.location as event_location',

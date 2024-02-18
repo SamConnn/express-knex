@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { type Knex } from 'knex'
+import knex from '../config/knex'
 
 const table = 'event'
 
 export const getEventModel = async (
   page: number,
-  limit: number,
-  trx?: any
-): Promise<any> => trx(table)
+  limit: number
+): Promise<any> => await knex(table)
   .select('event.id', 'event.name', 'event.description', 'event.date', 'event.location', 'event.image', 'event.created_at', 'event.updated_at')
   .paginate({ perPage: limit, currentPage: page, isLengthAware: true })
   .catch((err: string) => {
-    console.log('err', err)
+    console.error(err)
     throw new Error(err)
   })
 

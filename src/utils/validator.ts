@@ -14,8 +14,7 @@ export const eventSchema = object({
     name: string().required(),
     description: string().required(),
     location: string().required(),
-    date: date().required(),
-    time: date().required(),
+    time: date().default(new Date()),
     image: string().required()
   }),
   params: object({

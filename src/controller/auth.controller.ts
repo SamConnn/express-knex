@@ -31,7 +31,7 @@ export const signup = async (
 
   const { email, username, password, role } = req.body
 
-  const isUserExist = await findUserByEmail(String(email), knex)
+  const isUserExist = await findUserByEmail(String(email))
 
   if (isUserExist.length > 0) {
     throw new CustomError('User already exist', 'Can not create user', 400)
@@ -67,7 +67,7 @@ export const login = async (
     throw new CustomError('Please provide email and password!', '', 400)
   }
 
-  await findUserByEmail(String(email), knex).then(async (result) => {
+  await findUserByEmail(String(email)).then(async (result) => {
     if (result.length === 0) {
       throw new CustomError('User not found', '', 404)
     } else {

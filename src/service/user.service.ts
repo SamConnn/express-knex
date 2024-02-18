@@ -16,17 +16,17 @@ import {
 export const search = async (
   page: number,
   limit: number
-): Promise<any> => await withTransaction(knex, async (trx: Knex) => await getUserModel(trx, page, limit))
+): Promise<any> => await getUserModel(page, limit)
 
 export const create = async (body: any, next: NextFunction): Promise<any> => {
   const { email, password } = body
-  const isUserExist = await findUserByEmail(email, knex)
+  const isUserExist = await findUserByEmail(String(email))
 
   if (isUserExist.length > 0) {
     next(new CustomError('User already exist', 'Can not create user', 400))
     return
   }
-  const passEncrypt = await encryptPassword(password)
+  const passEncrypt = await encryptPassword(String(password))
 
   return await withTransaction(
     knex,

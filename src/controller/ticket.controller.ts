@@ -42,28 +42,20 @@ export const findTicketById = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
-  const { id } = req.params
-
-  await getTicketByIdModel(id)
-    .then((result) => {
-      if (!result) { next(new NotFoundError('Event not found')); return }
-      return res.status(200).json(result)
-    })
-    .catch((err: string) => { next(new NotFoundError(err)) })
-}
+): Promise<any> => await getTicketByIdModel(req.params?.id)
+  .then((result) => {
+    if (!result) { next(new NotFoundError('Event not found')); return }
+    return res.status(200).json(result)
+  })
+  .catch((err: string) => { next(new NotFoundError(err)) })
 
 export const createTicket = async (
   req: any,
   res: Response,
   next: NextFunction
-): Promise<void> => {
-  const { body } = req
-
-  createTicketService(res, body)
-    .then((result) => res.status(200).json(result))
-    .catch((err: string) => { next(new InternalServerError(err)) })
-}
+): Promise<any> => await createTicketService(res, req.body)
+  .then((result) => res.status(200).json(result))
+  .catch((err: string) => { next(new InternalServerError(err)) })
 
 export const updateTicket = async (
   req: any,
@@ -78,19 +70,13 @@ export const updateTicket = async (
       if (!result) { next(new NotFoundError('Event not found')); return }
       return res.status(200).json(result)
     })
-    .catch((err: string) => {
-      next(new InternalServerError(err))
-    })
+    .catch((err: string) => { next(new InternalServerError(err)) })
 }
 
 export const deleteTicket = async (
   req: any,
   res: Response,
   next: NextFunction
-): Promise<void> => {
-  const { id } = req.params
-
-  deleteTicketService(String(id))
-    .then((result) => res.status(200).json(result))
-    .catch((err: string) => { next(new InternalServerError(err)) })
-}
+): Promise<any> => await deleteTicketService(String(req.params?.id))
+  .then((result) => res.status(200).json(result))
+  .catch((err: string) => { next(new InternalServerError(err)) })

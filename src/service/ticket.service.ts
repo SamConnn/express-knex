@@ -13,13 +13,13 @@ import {
 export const search = async (
   page: number,
   limit: number
-): Promise<any> => await withTransaction(knex, async () => await getTicketModel(page, limit))
+): Promise<any> => await getTicketModel(page, limit)
 
 export const getListOfTicketByUser = async (
   page: number,
   limit: number,
   userID: string
-): Promise<any> => await withTransaction(knex, async () => await getListTicketOfEvent(userID, page, limit))
+): Promise<any> => await getListTicketOfEvent(userID, page, limit)
 
 export const create = async (
   res: any,
