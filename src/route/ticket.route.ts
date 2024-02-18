@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { protect, restrictTo } from '../controller/auth.controller'
-import express, { type Request, type Response, type NextFunction } from 'express'
+import express from 'express'
 import {
   getTicket,
   findTicketById,
@@ -10,22 +9,28 @@ import {
 } from '../controller/ticket.controller'
 import { validateRequest } from '../middleware/validate'
 import { ticketSchema } from '../utils/validator'
-import { applyRoutes } from '../utils/route'
-
-type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>
-type Route = [string, string, MiddlewareFunction[], MiddlewareFunction]
+import { type RouteDetails, applyRoutes } from '../utils/route'
+import { protect, restrictTo } from '../controller/auth.controller'
 
 const route = express.Router()
 
 route.use(protect, restrictTo('Admin'))
 
-const routes: Route[] = [
-  ['get', '/', [], getTicket],
-  ['get', '/:id', [], findTicketById],
-  ['post', '/', [validateRequest(ticketSchema)], createTicket],
-  ['put', '/:id', [validateRequest(ticketSchema)], updateTicket],
-  ['delete', '/:id', [], deleteTicket]
-]
+const routes: Record<string, RouteDetails[]> = {
+  get: [
+    ['/', [], getTicket],
+    ['/:id', [], findTicketById]
+  ],
+  post: [
+    ['/', [validateRequest(ticketSchema)], createTicket]
+  ],
+  put: [
+    ['/:id', [validateRequest(ticketSchema)], updateTicket]
+  ],
+  delete: [
+    ['/:id', [], deleteTicket]
+  ]
+}
 
 applyRoutes(routes, route)
 
